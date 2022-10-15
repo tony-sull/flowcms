@@ -1,10 +1,10 @@
 import type { APIRoute } from 'astro'
+import yaml from 'js-yaml'
 import { fetchContent } from '../../../api/index.js'
-import { stringify } from '../../../schemas/index.js'
 import type { Schema } from '../../../schemas/index.js'
 import { MaybeType } from '../../../utils/maybe.js'
 
-export const get: APIRoute = async ({ params }): Promise<Response> => {
+export const get: APIRoute = async ({ params }) => {
     const { schema, id } = params
 
     if (!schema) {
@@ -17,10 +17,18 @@ export const get: APIRoute = async ({ params }): Promise<Response> => {
 
     try {
         const content = await fetchContent(schema as Schema['@type'], id.toString())
+
+        if (content.type === MaybeType.Nothing) {
+            return new Response('404 not found', { status: 404 })
+        }
         
-        return content.type === MaybeType.Nothing
-            ? new Response('404 not found', { status: 404 })
-            : new Response(stringify(content.value), { headers: { 'Content-Type': 'application/ld+json' } })
+        const md = `---
+${yaml.dump(content.value)}
+---
+
+`
+        
+        return new Response(md, { headers: { 'Content-Type': 'text/markdown' }})
     } catch (err: any) {
         return new Response(err, { status: 500 })
     }
