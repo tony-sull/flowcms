@@ -3,7 +3,7 @@ import netlify from '@astrojs/netlify/edge-functions'
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://api.flow.dev',
+    site: 'https://api.netlify.dev',
     output: 'server',
     adapter: netlify()
 })
