@@ -1,4 +1,5 @@
 import type { MarkdownInstance } from 'astro'
+import readingTime from 'reading-time'
 import yaml from 'js-yaml'
 import { parserForType } from '../schemas/index.js'
 import type { Schema } from '../schemas/index.js'
@@ -18,7 +19,7 @@ async function fetchMarkdown<T extends Schema>(type: T['@type'], slug: string) {
     const md = await mdCache[key]()
 
     const articleBody = md.rawContent().trim()
-    const wordCount = articleBody.split(' ').length
+    const wordCount = readingTime(articleBody).words
 
     return {
         ...md.frontmatter,

@@ -5,11 +5,12 @@ import type { Schema } from '../../../schemas/index.js'
 import { MaybeType } from '../../../utils/maybe.js'
 
 function asMarkdown(content: Schema) {
-    return `---
-${yaml.dump(content)}
----
+    const { articleBody = '', ...frontmatter } = content as any
 
-`
+    return `---
+${yaml.dump(frontmatter)}---
+
+${articleBody}`
 }
 
 export const get: APIRoute = async ({ params }) => {
