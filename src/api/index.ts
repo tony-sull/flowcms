@@ -1,28 +1,63 @@
 import type { MarkdownInstance } from 'astro'
+import yaml from 'js-yaml'
 import { parserForType } from '../schemas/index.js'
 import type { Schema } from '../schemas/index.js'
-import { Just, Nothing } from '../utils/maybe.js'
+import { Just, MaybeType, Nothing } from '../utils/maybe.js'
 import type { Maybe } from '../utils/maybe.js'
 
-const cache = import.meta.glob<MarkdownInstance<any>>('/content/*/*.md')
+const mdCache = import.meta.glob<MarkdownInstance<any>>('/content/*/*.md')
+const yamlCache = import.meta.glob<string>('/content/**/*.yaml', { as: 'raw' })
 
-export async function fetchContent<T extends Schema>(schema: T['@type'], slug: string): Promise<Maybe<T>> {
-    const key = `/content/${schema}/${slug}.md`
+async function fetchMarkdown<T extends Schema>(type: T['@type'], slug: string) {
+    const key = `/content/${type}/${slug}.md`
 
-    if (!(key in cache)) {
+    if (!(key in mdCache)) {
         return Nothing()
     }
 
-    const md = await cache[key]()
+    const md = await mdCache[key]()
 
-    const rawContent = {
+    const articleBody = md.rawContent().trim()
+    const wordCount = articleBody.split(' ').length
+
+    return {
         ...md.frontmatter,
-        '@type': schema,
-        identifier: new URL(`/${schema}/${slug}`, import.meta.env.SITE).toString(),
-        url: new URL(`/${schema}/${slug}`, import.meta.env.SITE).toString()
+        articleBody,
+        wordCount
+    }
+}
+
+async function fetchYaml<T extends Schema>(type: T['@type'], slug: string) {
+    const key = `/content/${type}/${slug}.yaml`
+
+    if (!(key in yamlCache)) {
+        return Nothing()
     }
 
-    const parser = parserForType(schema)
+    const rawYaml = await yamlCache[key]()
+    const frontmatter = yaml.load(rawYaml)
 
-    return Just(parser(rawContent) as T)
+    if (!frontmatter) {
+        return Nothing()
+    }
+
+    return frontmatter
+}
+
+export async function fetchContent<T extends Schema>(type: T['@type'], slug: string): Promise<Maybe<T>> {
+    let rawContent = await fetchMarkdown(type, slug)
+
+    if (rawContent.type === MaybeType.Nothing) {
+        console.log('trying yaml')
+        rawContent = await fetchYaml(type, slug)
+    }
+
+    const parser = parserForType(type)
+
+    return Just(await parser({
+        ...rawContent,
+        '@type': type,
+        identifier: new URL(`/${type}/${slug}`, import.meta.env.SITE).toString(),
+        url: new URL(`/${type}/${slug}`, import.meta.env.SITE).toString(),
+    }) as T)
 }

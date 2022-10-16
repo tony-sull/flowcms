@@ -32,7 +32,7 @@ export const validator = z.object({
 export type Thing = z.infer<typeof validator>
 
 export function parse(thing: unknown) {
-    return validator.parse(thing)
+    return validator.parseAsync(thing)
 }
 
 export function stringify(thing: Thing) {

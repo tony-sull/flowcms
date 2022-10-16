@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import * as Base from './thing.js'
 
-const validator = Base.validator.extend({
+export const validator = Base.validator.extend({
     '@type': z.literal('Person'),
     email: z.string()
         .email()
@@ -18,7 +18,7 @@ const validator = Base.validator.extend({
 export type Person = z.infer<typeof validator>
 
 export function parse(thing: unknown) {
-    return validator.parse(thing)
+    return validator.parseAsync(thing)
 }
 
 export function stringify(thing: Person) {
