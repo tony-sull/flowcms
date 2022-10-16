@@ -1,9 +1,8 @@
 import { z } from 'zod'
-import type { Schema } from './index.js'
 import { fetchContent } from '../api'
 import { Maybe, MaybeType } from '../utils/maybe'
 
-export function relation<T>(type: string): z.ZodEffects<z.ZodString, T | undefined> {
+function relation<T>(type: string): z.ZodEffects<z.ZodString, T | undefined> {
     return z.string()
             .transform(async (slug: string) => {
                 const maybeContent: Maybe<T> = await fetchContent<T>(type as any, slug)
@@ -12,4 +11,14 @@ export function relation<T>(type: string): z.ZodEffects<z.ZodString, T | undefin
                     ? maybeContent.value
                     : undefined
             })
+}
+
+function safeDate() {
+    return z.date()
+        .or(z.string().transform((value) => new Date(value)))
+}
+
+export const zc = {
+    relation,
+    safeDate
 }

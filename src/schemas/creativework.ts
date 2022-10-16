@@ -1,38 +1,22 @@
 import { z } from 'zod'
 import * as Base from './thing.js'
-import { relation } from './zod.js'
-import { fetchContent } from '../api/index.js'
-import { Maybe, MaybeType } from '../utils/maybe.js'
 import type { Person } from './person.js'
-
-function safeDate(value?: string | Date) {
-    if (!value) { return undefined }
-
-    try {
-        return new Date(value)
-    } catch {
-        return undefined
-    }
-}
+import { zc } from '../utils/zod.js'
 
 export const validator = Base.validator.extend({
     '@type': z.literal('CreativeWork'),
     abstract: z.string()
         .optional()
         .describe('An abstract is a short description that summarizes a CreativeWork.'),
-    author: relation<Person>('Person')
+    author: zc.relation<Person>('Person')
         .describe('The author of this content or rating.'),
-    dateCreated: z.date()
+    dateCreated: zc.safeDate()
         .optional()
         .describe('The date on which the CreativeWork was created or the item was added to a DataFeed.'),
-    dateModified: z.date()
+    dateModified: zc.safeDate()
         .optional()
         .describe('The date on which the CreativeWork was most recently modified.'),
-    datePublished: z.date()
-        .or(
-            z.string()
-            .transform(safeDate)
-        )
+    datePublished: zc.safeDate()
         .optional()
         .describe('Date of first broadcast/publication.'),
     encodingType: z.string()

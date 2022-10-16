@@ -1,9 +1,11 @@
 import * as BlogPosting from './blogposting.js'
+import * as ImageObject from './imageobject.js'
 import * as Person from './person.js'
 import * as Thing from './thing.js'
 
 export type Schema =
     | BlogPosting.BlogPosting
+    | ImageObject.ImageObject
     | Person.Person
     | Thing.Thing
 
@@ -11,6 +13,8 @@ export function schemaForType<T extends Schema>(type: T['@type']) {
     switch (type) {
         case 'BlogPosting':
             return BlogPosting.validator
+        case 'ImageObject':
+            return ImageObject.validator
         case 'Person':
             return Person.validator
         case 'Thing':
@@ -24,6 +28,8 @@ export function parserForType<T extends Schema>(type: T['@type']) {
     switch (type) {
         case 'BlogPosting':
             return BlogPosting.parse
+        case 'ImageObject':
+            return ImageObject.parse
         case 'Person':
             return Person.parse
         case 'Thing':
@@ -37,6 +43,8 @@ export function stringify<T extends Schema>(thing: T) {
     switch (thing['@type']) {
         case 'BlogPosting':
             return BlogPosting.stringify(thing)
+        case 'ImageObject':
+            return ImageObject.stringify(thing)
         case 'Person':
             return Person.stringify(thing)
         case 'Thing':
