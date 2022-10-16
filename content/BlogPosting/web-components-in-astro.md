@@ -1,7 +1,7 @@
 ---
 name: How to use Web Components in Astro
 excerpt: Building custom elements in plain old JavaScript + trying out the new Astro.resolve() API!
-datePublished: "Aug 23, 2021"
+datePublished: 'Aug 23, 2021'
 author: tony
 ---
 
@@ -63,13 +63,13 @@ But you can make your own `<my-counter>` component, that's definitely not part o
 
 ```js
 class MyCounter extends HTMLElement {
-  constructor() {
-    super()
-    this.count = 0
-    // open mode keeps all elements accessible to the outside world
-    this.attachShadow({ mode: 'open' })
-  }
-  // ...
+    constructor() {
+        super()
+        this.count = 0
+        // open mode keeps all elements accessible to the outside world
+        this.attachShadow({ mode: 'open' })
+    }
+    // ...
 }
 
 // tell the browser to use this class for all `<my-counter>` elements
@@ -110,17 +110,17 @@ const template = `
 `
 
 class MyCounter extends HTMLElement {
-  constructor() {
-    super()
+    constructor() {
+        super()
 
-    const elem = document.createElement('template')
-    elem.innerHTML = template
+        const elem = document.createElement('template')
+        elem.innerHTML = template
 
-    this.count = 0
-    this.attachShadow({ mode: 'open' }).appendChild(
-      elem.content.cloneNode(true)
-    )
-  }
+        this.count = 0
+        this.attachShadow({ mode: 'open' }).appendChild(
+            elem.content.cloneNode(true)
+        )
+    }
 }
 
 customElements.define('my-counter', MyCounter)
@@ -138,14 +138,14 @@ In the demo project, the web component is defined in `src/components/my-counter.
 
 ```astro
 <head>
-  <title>Welcome to Astro</title>
+    <title>Welcome to Astro</title>
 
-  <script type="module" src={Astro.resolve('../components/my-counter.js')}
-  ></script>
+    <script type="module" src={Astro.resolve('../components/my-counter.js')}
+    ></script>
 </head>
 
 <body>
-  <my-counter></my-counter>
+    <my-counter />
 </body>
 ```
 

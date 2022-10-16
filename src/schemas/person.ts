@@ -4,14 +4,13 @@ import * as Base from './thing.js'
 function createSchema() {
     return Base.schema.extend({
         '@type': z.literal('Person'),
-        email: z.string()
-            .email()
-            .optional()
-            .describe('Email address'),
-        familyName: z.string()
+        email: z.string().email().optional().describe('Email address'),
+        familyName: z
+            .string()
             .optional()
             .describe('Family name. In the U.S., the last name of a Person.'),
-        givenName: z.string()
+        givenName: z
+            .string()
             .optional()
             .describe('Given name. In the U.S., the first name of a Person. ')
     })

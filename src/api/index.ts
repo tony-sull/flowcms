@@ -44,7 +44,10 @@ async function fetchYaml<T extends Schema>(type: T['@type'], slug: string) {
     return frontmatter
 }
 
-export async function fetchContent<T extends Schema>(type: T['@type'], slug: string): Promise<Maybe<T>> {
+export async function fetchContent<T extends Schema>(
+    type: T['@type'],
+    slug: string
+): Promise<Maybe<T>> {
     let rawContent = await fetchMarkdown(type, slug)
 
     if (rawContent.type === MaybeType.Nothing) {
@@ -57,10 +60,15 @@ export async function fetchContent<T extends Schema>(type: T['@type'], slug: str
 
     const parser = parserForType(type)
 
-    return Just(await parser({
-        ...rawContent,
-        '@type': type,
-        identifier: new URL(`/${type}/${slug}`, import.meta.env.SITE).toString(),
-        url: new URL(`/${type}/${slug}`, import.meta.env.SITE).toString(),
-    }) as T)
+    return Just(
+        (await parser({
+            ...rawContent,
+            '@type': type,
+            identifier: new URL(
+                `/${type}/${slug}`,
+                import.meta.env.SITE
+            ).toString(),
+            url: new URL(`/${type}/${slug}`, import.meta.env.SITE).toString()
+        })) as T
+    )
 }

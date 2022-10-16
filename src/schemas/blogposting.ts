@@ -4,10 +4,12 @@ import * as Base from './creativework.js'
 function createSchema() {
     return Base.schema.extend({
         '@type': z.literal('BlogPosting'),
-        articleBody: z.string()
+        articleBody: z
+            .string()
             .min(1)
             .describe('The actual body of the article.'),
-        wordCount: z.number()
+        wordCount: z
+            .number()
             .min(1)
             .describe('The number of words in the text of the article.')
     })

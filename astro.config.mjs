@@ -1,11 +1,9 @@
-import { defineConfig } from 'astro/config';
-
-// https://astro.build/config
-import node from "@astrojs/node";
+import { defineConfig } from 'astro/config'
+import netlify from '@astrojs/netlify/edge-functions'
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://api.flow.dev",
-  output: "server",
-  adapter: node({ mode: 'standalone' })
-});
+    site: 'https://api.flow.dev',
+    output: 'server',
+    adapter: netlify()
+})

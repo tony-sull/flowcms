@@ -4,16 +4,13 @@ import * as Base from './mediaobject.js'
 function createSchema() {
     return Base.schema.extend({
         '@type': z.literal('ImageObject'),
-        caption: z.string()
-            .describe('The caption for this image.'),
-        height: z.number()
+        caption: z.string().describe('The caption for this image.'),
+        height: z
+            .number()
             .min(1)
             .optional()
             .describe('The height of the item.'),
-        width: z.number()
-            .min(1)
-            .optional()
-            .describe('The width of the item.')
+        width: z.number().min(1).optional().describe('The width of the item.')
     })
 }
 

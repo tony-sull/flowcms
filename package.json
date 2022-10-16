@@ -13,13 +13,11 @@
         "format:prettier": "prettier -w --plugin-search-dir=. .",
         "format:eslint": "eslint --fix \"src/**/*.{js,astro}\""
     },
-    "dependencies": {
-        "astro": "^1.5.0"
-    },
     "devDependencies": {
-        "@astrojs/node": "^2.0.0",
+        "@astrojs/netlify": "^1.2.0",
         "@types/js-yaml": "^4.0.5",
         "@typescript-eslint/parser": "^5.40.0",
+        "astro": "^1.5.0",
         "eslint": "^8.25.0",
         "eslint-plugin-astro": "^0.20.0",
         "eslint-plugin-jsx-a11y": "^6.6.1",
