@@ -1,6 +1,5 @@
 import { z } from 'zod'
 import { fetchContent } from '../api/index.js'
-import type { Schema } from '../schemas/index.js'
 import { Maybe, MaybeType } from '../utils/maybe.js'
 import { isUrl } from '../utils/url.js'
 

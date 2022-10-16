@@ -4,7 +4,6 @@ import { zc } from '../utils/zod.js'
 
 export function createSchema() {
     return z.object({
-        '@context': z.string().url().default('http://schema.org/'),
         '@type': z.literal('Thing').describe('Schema identifier type.'),
         description: z
             .string()

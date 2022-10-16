@@ -23,7 +23,10 @@ export const get: APIRoute = async ({ params }): Promise<Response> => {
 
         return content.type === MaybeType.Nothing
             ? new Response('404 not found', { status: 404 })
-            : new Response(stringify(content.value), {
+            : new Response(stringify({
+                '@context': 'http://schema.org/',
+                ...content.value
+            }), {
                   headers: { 'Content-Type': 'application/ld+json' }
               })
     } catch (err: any) {
