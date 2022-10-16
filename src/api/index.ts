@@ -48,8 +48,11 @@ export async function fetchContent<T extends Schema>(type: T['@type'], slug: str
     let rawContent = await fetchMarkdown(type, slug)
 
     if (rawContent.type === MaybeType.Nothing) {
-        console.log('trying yaml')
         rawContent = await fetchYaml(type, slug)
+    }
+
+    if (rawContent.type === MaybeType.Nothing) {
+        return rawContent
     }
 
     const parser = parserForType(type)

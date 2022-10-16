@@ -4,21 +4,21 @@ import * as Person from './person.js'
 import * as Thing from './thing.js'
 
 export type Schema =
-    | BlogPosting.BlogPosting
-    | ImageObject.ImageObject
-    | Person.Person
-    | Thing.Thing
+    | BlogPosting.Schema
+    | ImageObject.Schema
+    | Person.Schema
+    | Thing.Schema
 
 export function schemaForType<T extends Schema>(type: T['@type']) {
     switch (type) {
         case 'BlogPosting':
-            return BlogPosting.validator
+            return BlogPosting.schema
         case 'ImageObject':
-            return ImageObject.validator
+            return ImageObject.schema
         case 'Person':
-            return Person.validator
+            return Person.schema
         case 'Thing':
-            return Thing.validator
+            return Thing.schema
         default:
             throw new Error(`[schemaForType] "${type}" type not found!`)
     }

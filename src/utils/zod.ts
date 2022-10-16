@@ -1,11 +1,13 @@
 import { z } from 'zod'
-import { fetchContent } from '../api'
-import { Maybe, MaybeType } from '../utils/maybe'
+import { fetchContent } from '../api/index.js'
+import type { Schema } from '../schemas/index.js'
+import { Maybe, MaybeType } from '../utils/maybe.js'
+import { isUrl } from '../utils/url.js'
 
 function relation<T>(type: string): z.ZodEffects<z.ZodString, T | undefined> {
     return z.string()
             .transform(async (slug: string) => {
-                const maybeContent: Maybe<T> = await fetchContent<T>(type as any, slug)
+                const maybeContent: Maybe<T> = await fetchContent<any>(type as any, slug)
 
                 return maybeContent.type === MaybeType.Just
                     ? maybeContent.value
@@ -18,7 +20,19 @@ function safeDate() {
         .or(z.string().transform((value) => new Date(value)))
 }
 
+function safeUrl(root: string | URL = import.meta.env.SITE) {
+    return z.string()
+        .transform((value: string) => {
+            try {
+                return isUrl(value) ? value : new URL(value, root).toString()
+            } catch {
+                return undefined
+            }
+        })
+}
+
 export const zc = {
     relation,
-    safeDate
+    safeDate,
+    safeUrl
 }
