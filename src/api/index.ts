@@ -1,10 +1,10 @@
 import type { MarkdownInstance } from 'astro'
-import readingTime from 'reading-time'
 import yaml from 'js-yaml'
 import { parserForType } from '../schemas/index.js'
 import type { Schema } from '../schemas/index.js'
 import { Just, MaybeType, Nothing } from '../utils/maybe.js'
 import type { Maybe } from '../utils/maybe.js'
+import readingTime from '../utils/reading-time.js'
 
 const mdCache = import.meta.glob<MarkdownInstance<any>>('/content/*/*.md')
 const yamlCache = import.meta.glob<string>('/content/**/*.yaml', { as: 'raw' })
