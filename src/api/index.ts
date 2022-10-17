@@ -9,7 +9,7 @@ import type { Maybe } from '../utils/maybe.js'
 const mdCache = import.meta.glob<MarkdownInstance<any>>('/content/*/*.md')
 const yamlCache = import.meta.glob<string>('/content/**/*.yaml', { as: 'raw' })
 
-async function fetchMarkdown<T extends Schema>(type: T['@type'], slug: string) {
+async function fetchMarkdown<T extends Schema>(type: T['@type'], slug: string, eager = true) {
     const key = `/content/${type}/${slug}.md`
 
     if (!(key in mdCache)) {
@@ -18,8 +18,8 @@ async function fetchMarkdown<T extends Schema>(type: T['@type'], slug: string) {
 
     const md = await mdCache[key]()
 
-    const articleBody = md.rawContent().trim()
-    const wordCount = readingTime(articleBody).words
+    const articleBody = eager ? md.rawContent().trim() : undefined
+    const wordCount = articleBody && readingTime(articleBody).words
 
     return {
         ...md.frontmatter,
@@ -45,11 +45,12 @@ async function fetchYaml<T extends Schema>(type: T['@type'], slug: string) {
     return frontmatter
 }
 
-export async function fetchContent<T extends Schema>(
+export async function fetchOne<T extends Schema>(
     type: T['@type'],
-    slug: string
+    slug: string,
+    eager = true
 ): Promise<Maybe<T>> {
-    let rawContent = await fetchMarkdown(type, slug)
+    let rawContent = await fetchMarkdown(type, slug, eager)
 
     if (rawContent.type === MaybeType.Nothing) {
         rawContent = await fetchYaml(type, slug)
@@ -72,4 +73,41 @@ export async function fetchContent<T extends Schema>(
             url: new URL(`/${type}/${slug}`, import.meta.env.SITE).toString()
         })) as T
     )
+}
+
+export async function fetchAll<T extends Schema>(
+    type: T['@type']
+): Promise<T[]> {
+    const mdRegex = new RegExp(`^/content/${type}/(.+).md`)
+    const yamlRegex = new RegExp(`^/content/${type}/(.+?).yaml`)
+
+    const mdEntries = Object.keys(mdCache)
+        .reduce((acc, next) => {
+            const [, match] = next.match(mdRegex) || []
+
+            if (match) {
+                acc.push(fetchOne<T>(type, match, false)
+                    .then((maybe) => maybe.type === MaybeType.Just ? maybe.value : undefined
+                ))
+            }
+
+            return acc
+        }, [] as Promise<T | undefined>[])
+    
+    const yamlEntries = Object.keys(yamlCache)
+        .reduce((acc, next) => {
+            const [, match] = next.match(yamlRegex) || []
+
+            if (match) {
+                acc.push(fetchOne<T>(type, match, false)
+                    .then((maybe) => maybe.type === MaybeType.Just ? maybe.value : undefined
+                ))
+            }
+
+            return acc
+        }, [] as Promise<T | undefined>[])
+
+    const results = await Promise.all(mdEntries.concat(yamlEntries))
+
+    return results.filter(Boolean) as T[]
 }

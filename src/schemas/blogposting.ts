@@ -7,10 +7,12 @@ function createSchema() {
         articleBody: z
             .string()
             .min(1)
+            .optional()
             .describe('The actual body of the article.'),
         wordCount: z
             .number()
             .min(1)
+            .optional()
             .describe('The number of words in the text of the article.')
     })
 }

@@ -1,0 +1,42 @@
+---
+import { Markdown } from 'astro-remote'
+import { get as jsonld } from './index.jsonld.js'
+import Schema from '../../components/Schema.astro'
+
+function parseAccept(request: Request) {
+    return (request.headers.get('Accept') || '')
+        .split(',')
+        .map((a) => a.trim())
+        .filter(Boolean)
+}
+
+const accept = parseAccept(Astro.request)
+
+const res = (await jsonld(Astro)) as Response
+
+// 404, bail early
+if (res.status !== 200) {
+    return res
+}
+
+// reuse the `.jsonld` endpoint
+if (
+    accept.includes('application/json') ||
+    accept.includes('application/ld+json')
+) {
+    return res
+}
+
+const { articleBody, ...script } = await res.json()
+---
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{script.name}</title>
+</head>
+<body>
+    <Schema json={script} space={2} />
+</body>
+</html>
+

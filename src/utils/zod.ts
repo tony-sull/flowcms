@@ -1,11 +1,11 @@
 import { z } from 'zod'
-import { fetchContent } from '../api/index.js'
+import { fetchOne } from '../api/index.js'
 import { Maybe, MaybeType } from '../utils/maybe.js'
 import { isUrl } from '../utils/url.js'
 
 function relation<T>(type: string): z.ZodEffects<z.ZodString, T | undefined> {
     return z.string().transform(async (slug: string) => {
-        const maybeContent: Maybe<T> = await fetchContent<any>(
+        const maybeContent: Maybe<T> = await fetchOne<any>(
             type as any,
             slug
         )

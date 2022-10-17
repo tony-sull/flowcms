@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro'
 import yaml from 'js-yaml'
-import { fetchContent } from '../../../api/index.js'
+import { fetchOne } from '../../../api/index.js'
 import type { Schema } from '../../../schemas/index.js'
 import { MaybeType } from '../../../utils/maybe.js'
 
@@ -25,7 +25,7 @@ export const get: APIRoute = async ({ params }) => {
     }
 
     try {
-        const content = await fetchContent(
+        const content = await fetchOne(
             schema as Schema['@type'],
             id.toString()
         )
