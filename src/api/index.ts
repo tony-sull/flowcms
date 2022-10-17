@@ -19,7 +19,7 @@ async function fetchMarkdown<T extends Schema>(type: T['@type'], slug: string, e
     const md = await mdCache[key]()
 
     const articleBody = eager ? md.rawContent().trim() : undefined
-    const wordCount = articleBody && readingTime(articleBody).words
+    const wordCount = articleBody && readingTime(articleBody).words.total
 
     return {
         ...md.frontmatter,
