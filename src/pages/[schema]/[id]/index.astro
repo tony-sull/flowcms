@@ -43,7 +43,9 @@ const { articleBody, ...script } = await res.json()
 </head>
 <body>
     <Schema json={script} space={2} />
-    <Markdown content={articleBody} />
+    {articleBody && (
+        <Markdown content={articleBody} />
+    )}
 </body>
 </html>
 

@@ -3,7 +3,7 @@ import * as Base from './creativework.js'
 
 function createSchema() {
     return Base.schema.extend({
-        '@type': z.literal('BlogPosting'),
+        '@type': z.literal('Article'),
         articleBody: z
             .string()
             .min(1)

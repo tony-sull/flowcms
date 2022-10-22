@@ -1,11 +1,11 @@
 import { z } from 'zod'
 import * as Base from './thing.js'
-import type { Person } from './person.js'
+import type { Schema as Person } from './person.js'
 import { zc } from '../utils/zod.js'
 
 function createSchema() {
     return Base.schema.extend({
-        '@type': z.literal('CreativeWork'),
+        '@type': z.literal('Publication'),
         abstract: z
             .string()
             .optional()
