@@ -1,6 +1,6 @@
 ---
 name: The power of simplicity
-excerpt: It's easy to get swept up in the latest libraries and platforms, but
+description: It's easy to get swept up in the latest libraries and platforms, but
     don't underestimate the time savings of "boring" tech.
 image: 2021-08-07-power-of-simplicity
 datePublished: '2021-08-07T17:42:35Z'

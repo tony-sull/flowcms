@@ -57,6 +57,7 @@ export const get: APIRoute = async ({ params, request }) => {
                 .map((article) => ({
                     link: article.url,
                     title: article.name,
+                    description: article.description,
                     pubDate: article.datePublished!,
                     customData: stringifyCustomData({
                         author: article.author?.email,

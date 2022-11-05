@@ -4,6 +4,10 @@ import * as Base from './creativework.js'
 function createSchema() {
     return Base.schema.extend({
         '@type': z.literal('Article'),
+        description: z
+            .string()
+            .min(1)
+            .describe('A description of the article, often an excerpt used in article previews.'),
         articleBody: z
             .string()
             .min(1)
