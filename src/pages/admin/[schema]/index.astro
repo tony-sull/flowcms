@@ -16,6 +16,10 @@ if (!schema) {
 const content = await fetchAllBySchema(type)
 
 const title = plural(type)
+
+function identifierToSlug(identifier: string) {
+    return identifier.slice(identifier.lastIndexOf('/') + 1)
+}
 ---
 
 <Layout title={title}>
@@ -24,8 +28,10 @@ const title = plural(type)
         <ul>
             {content.map(entry => (
                 <li>
-                    <h3>{entry.name}</h3>
-                    <p>{entry.description}</p>
+                    <a href={`/admin/${type}/${identifierToSlug(entry.identifier)}`}>
+                        <h3>{entry.name}</h3>
+                        <p>{entry.description}</p>
+                    </a>
                 </li>
             ))}
         </ul>

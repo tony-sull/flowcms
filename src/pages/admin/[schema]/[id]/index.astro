@@ -1,0 +1,27 @@
+---
+import { fetchOne } from '../../../../api/index.js'
+import Layout from '../../../../layouts/Admin.astro'
+import { schemaForType } from '../../../../schemas/index.js'
+import type { Schema } from '../../../../schemas/index.js'
+import { MaybeType } from '../../../../utils/maybe.js'
+
+const { schema: type, id } = Astro.params as { schema: Schema['@type'], id: string }
+
+const schema = schemaForType(type)
+
+if (!schema) {
+    return new Response('404 not found', { status: 404 })
+}
+
+const maybeContent = await fetchOne(type, id)
+
+if (maybeContent.type === MaybeType.Nothing) {
+    return new Response('404 not found', { status: 404 })
+}
+
+const content = maybeContent.value
+---
+
+<Layout title={content.name}>
+    <h1>{content.name}</h1>
+</Layout>
