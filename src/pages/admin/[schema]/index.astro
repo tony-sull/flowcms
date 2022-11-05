@@ -1,0 +1,33 @@
+---
+import { plural } from 'pluralize'
+import Layout from '../../../layouts/Admin.astro'
+import { fetchAllBySchema } from '../../../api/index.js'
+import { schemaForType } from '../../../schemas/index.js'
+import type { Schema } from '../../../schemas/index.js'
+
+const { schema: type } = Astro.params as { schema: Schema['@type'] }
+
+const schema = schemaForType(type)
+
+if (!schema) {
+    return new Response('404 not found', { status: 404 })
+}
+
+const content = await fetchAllBySchema(type)
+
+const title = plural(type)
+---
+
+<Layout title={title}>
+    <main>
+        <h1>{plural(type)}</h1>
+        <ul>
+            {content.map(entry => (
+                <li>
+                    <h3>{entry.name}</h3>
+                    <p>{entry.description}</p>
+                </li>
+            ))}
+        </ul>
+    </main>
+</Layout>

@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro'
-import { fetchAll } from '../../api/index.js'
+import { fetchAllBySchema } from '../../api/index.js'
 import type { Schema } from '../../schemas/index.js'
 import { ldToString } from '../../components/schema.js'
 
@@ -29,7 +29,7 @@ export const get: APIRoute = async ({ params, request }): Promise<Response> => {
     const page = safeParse(1)(url.searchParams.get('page'))
 
     try {
-        const content = await fetchAll(schema as Schema['@type'])
+        const content = await fetchAllBySchema(schema as Schema['@type'])
 
         // TODO: What's the best way to efficiently load a page of unsorted files?
         const pageContent = content.slice((page - 1) * limit, page * limit)

@@ -79,7 +79,44 @@ export async function fetchOne<T extends Schema>(
     )
 }
 
-export async function fetchAll<T extends Schema>(
+export async function fetchAll(): Promise<Schema[]> {
+    const mdRegex = new RegExp(`^/content/(.+)/(.+).md`)
+    const yamlRegex = new RegExp(`^/content/(.+)/(.+?).yaml`)
+
+    const mdEntries = Object.keys(mdCache).reduce((acc, next) => {
+        const [, type, match] = next.match(mdRegex) || []
+
+        if (type && match) {
+            acc.push(
+                fetchOne<Schema>(type as Schema['@type'], match, false).then((maybe) =>
+                    maybe.type === MaybeType.Just ? maybe.value : undefined
+                )
+            )
+        }
+
+        return acc
+    }, [] as Promise<Schema | undefined>[])
+
+    const yamlEntries = Object.keys(yamlCache).reduce((acc, next) => {
+        const [, type, match] = next.match(yamlRegex) || []
+
+        if (type && match) {
+            acc.push(
+                fetchOne<Schema>(type as Schema['@type'], match, false).then((maybe) =>
+                    maybe.type === MaybeType.Just ? maybe.value : undefined
+                )
+            )
+        }
+
+        return acc
+    }, [] as Promise<Schema | undefined>[])
+
+    const results = await Promise.all(mdEntries.concat(yamlEntries))
+
+    return results.filter(Boolean) as Schema[]
+}
+
+export async function fetchAllBySchema<T extends Schema>(
     type: T['@type']
 ): Promise<T[]> {
     const mdRegex = new RegExp(`^/content/${type}/(.+).md`)
