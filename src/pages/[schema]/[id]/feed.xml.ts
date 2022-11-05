@@ -2,14 +2,17 @@ import rss from '@astrojs/rss'
 import type { APIRoute } from 'astro'
 import { fetchOne } from '../../../api/index.js'
 import type { Schema } from '../../../schemas/index.js'
-import type { Schema as ImageObject } from '../../../schemas/imageobject.js'
 import type { Schema as Publication } from '../../../schemas/publication.js'
 import { MaybeType } from '../../../utils/maybe.js'
 
-function stringifyCustomData(data: Record<string, unknown>) {
+function isObject(value: unknown): value is Record<string, unknown> {
+    return Object.prototype.toString.call(value) === '[object Object]'
+}
+
+function stringifyCustomData(data: Record<string, unknown>): string {
     return Object.entries(data)
         .filter(([key, value]) => value !== undefined && value !== null)
-        .map(([key, value]) => `<${key}>${value}</${key}>`)
+        .map(([key, value]) => `<${key}>${isObject(value) ? stringifyCustomData(value) : value}</${key}>`)
         .join('')
 }
 
@@ -64,8 +67,12 @@ export const get: APIRoute = async ({ params, request }) => {
                 pubDate: pubDate?.toUTCString(),
                 copywright: `© ${new Date().getFullYear()}. All rights reserved.`,
                 generator: 'Flow CMS',
-                image: (publication.image as ImageObject | undefined)
-                    ?.contentUrl,
+                image: publication.image?.contentUrl && {
+                    link: import.meta.env.SITE,
+                    title: publication.name,
+                    description: publication.description,
+                    url: publication.image?.contentUrl
+                },
                 lastBuildDate: new Date().toUTCString(),
                 link: new URL(
                     new URL(request.url).pathname,

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import * as Base from './thing.js'
+import * as Base from './base.js'
 import { zc } from '../utils/zod.js'
 
 function createSchema() {
