@@ -30,12 +30,11 @@ const { articleBody, ...script } = await res.json()
 ---
 
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>{script.name}</title>
-</head>
-<body>
-    <Schema json={script} space={2} />
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{script.name}</title>
+    </head>
+    <body>
+        <Schema json={script} space={2} />
+    </body>
 </html>
-

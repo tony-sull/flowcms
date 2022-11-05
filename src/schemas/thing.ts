@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import type { Schema as ImageObject } from './imageobject.js'
 import { zc } from '../utils/zod.js'
 
 export function createSchema() {
@@ -34,7 +33,7 @@ export function createSchema() {
 
 export const schema = createSchema()
 
-export type Schema = z.infer<typeof schema> & { image?: ImageObject }
+export type Schema = z.infer<typeof schema>
 
 export function parse(thing: unknown) {
     return schema.parseAsync(thing)

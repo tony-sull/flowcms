@@ -9,7 +9,11 @@ import readingTime from '../utils/reading-time.js'
 const mdCache = import.meta.glob<MarkdownInstance<any>>('/content/*/*.md')
 const yamlCache = import.meta.glob<string>('/content/**/*.yaml', { as: 'raw' })
 
-async function fetchMarkdown<T extends Schema>(type: T['@type'], slug: string, eager = true) {
+async function fetchMarkdown<T extends Schema>(
+    type: T['@type'],
+    slug: string,
+    eager = true
+) {
     const key = `/content/${type}/${slug}.md`
 
     if (!(key in mdCache)) {
@@ -81,31 +85,33 @@ export async function fetchAll<T extends Schema>(
     const mdRegex = new RegExp(`^/content/${type}/(.+).md`)
     const yamlRegex = new RegExp(`^/content/${type}/(.+?).yaml`)
 
-    const mdEntries = Object.keys(mdCache)
-        .reduce((acc, next) => {
-            const [, match] = next.match(mdRegex) || []
+    const mdEntries = Object.keys(mdCache).reduce((acc, next) => {
+        const [, match] = next.match(mdRegex) || []
 
-            if (match) {
-                acc.push(fetchOne<T>(type, match, false)
-                    .then((maybe) => maybe.type === MaybeType.Just ? maybe.value : undefined
-                ))
-            }
+        if (match) {
+            acc.push(
+                fetchOne<T>(type, match, false).then((maybe) =>
+                    maybe.type === MaybeType.Just ? maybe.value : undefined
+                )
+            )
+        }
 
-            return acc
-        }, [] as Promise<T | undefined>[])
-    
-    const yamlEntries = Object.keys(yamlCache)
-        .reduce((acc, next) => {
-            const [, match] = next.match(yamlRegex) || []
+        return acc
+    }, [] as Promise<T | undefined>[])
 
-            if (match) {
-                acc.push(fetchOne<T>(type, match, false)
-                    .then((maybe) => maybe.type === MaybeType.Just ? maybe.value : undefined
-                ))
-            }
+    const yamlEntries = Object.keys(yamlCache).reduce((acc, next) => {
+        const [, match] = next.match(yamlRegex) || []
 
-            return acc
-        }, [] as Promise<T | undefined>[])
+        if (match) {
+            acc.push(
+                fetchOne<T>(type, match, false).then((maybe) =>
+                    maybe.type === MaybeType.Just ? maybe.value : undefined
+                )
+            )
+        }
+
+        return acc
+    }, [] as Promise<T | undefined>[])
 
     const results = await Promise.all(mdEntries.concat(yamlEntries))
 

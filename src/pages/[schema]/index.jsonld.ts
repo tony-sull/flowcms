@@ -5,7 +5,9 @@ import { ldToString } from '../../components/schema.js'
 
 function safeParse(fallback: number) {
     return (value?: string | null) => {
-        if (value === undefined || value === null) { return fallback }
+        if (value === undefined || value === null) {
+            return fallback
+        }
         try {
             return parseInt(value)
         } catch {
@@ -27,9 +29,7 @@ export const get: APIRoute = async ({ params, request }): Promise<Response> => {
     const page = safeParse(1)(url.searchParams.get('page'))
 
     try {
-        const content = await fetchAll(
-            schema as Schema['@type']
-        )
+        const content = await fetchAll(schema as Schema['@type'])
 
         // TODO: What's the best way to efficiently load a page of unsorted files?
         const pageContent = content.slice((page - 1) * limit, page * limit)

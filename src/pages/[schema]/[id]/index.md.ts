@@ -25,10 +25,7 @@ export const get: APIRoute = async ({ params }) => {
     }
 
     try {
-        const content = await fetchOne(
-            schema as Schema['@type'],
-            id.toString()
-        )
+        const content = await fetchOne(schema as Schema['@type'], id.toString())
 
         return content.type === MaybeType.Nothing
             ? new Response('404 not found', { status: 404 })

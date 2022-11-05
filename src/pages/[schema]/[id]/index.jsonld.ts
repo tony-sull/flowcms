@@ -6,7 +6,9 @@ import { ldToString } from '../../../components/schema.js'
 
 function safeParse(fallback: number) {
     return (value?: string | null) => {
-        if (value === undefined || value === null) { return fallback }
+        if (value === undefined || value === null) {
+            return fallback
+        }
         try {
             return parseInt(value)
         } catch {
@@ -32,17 +34,17 @@ export const get: APIRoute = async ({ params, request }): Promise<Response> => {
     const page = safeParse(1)(url.searchParams.get('page'))
 
     try {
-        const content = await fetchOne(
-            schema as Schema['@type'],
-            id.toString()
-        )
+        const content = await fetchOne(schema as Schema['@type'], id.toString())
 
         if (content.type === MaybeType.Nothing) {
             return new Response('404 not found', { status: 404 })
         }
 
         if ('@graph' in content.value) {
-            content.value['@graph'] = content.value['@graph'].slice((page - 1) * limit, page * limit)
+            content.value['@graph'] = content.value['@graph'].slice(
+                (page - 1) * limit,
+                page * limit
+            )
         }
 
         return new Response(ldToString(content.value as any), {
